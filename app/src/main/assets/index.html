@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Continental</title>
+
+  <!-- OFFLINE -->
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <!-- Encabezado -->
+  <header class="p-5">
+    <div class="mx-auto w-full" style="max-width: 1100px;">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center" style="gap:12px;">
+          <div class="bg-oro" style="padding:10px;border-radius:14px;display:flex;align-items:center;justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h1 class="uppercase" style="margin:0;color:white;font-weight:900;letter-spacing:.04em;">Continental</h1>
+        </div>
+
+        <button onclick="toggleManual()" aria-label="Manual" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:10px;color:var(--oro);display:flex;align-items:center;justify-content:center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="p-4 flex-1 mx-auto w-full" style="max-width: 980px;">
+
+    <!-- Panel Valor Mesa -->
+    <div class="mb-8 card card-left-oro p-6" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="bg-stone-100 text-oro" style="padding:12px;border-radius:16px;border:1px solid var(--stone-200);display:flex;align-items:center;justify-content:center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-stone-500 uppercase" style="font-size:10px;font-weight:800;letter-spacing:.22em;margin-bottom:4px;">Apuesta x 100 puntos</div>
+          <div class="text-vino uppercase" style="font-size:13px;font-weight:900;letter-spacing:.08em;">Valor de la Mesa</div>
+        </div>
+      </div>
+
+      <div class="bg-stone-50" style="display:flex;align-items:center;gap:10px;border:1px solid var(--stone-300);border-radius:18px;padding:10px 12px;">
+        <span class="text-oro" style="font-weight:900;font-size:22px;">$</span>
+        <input type="number" id="betRate" value="0" inputmode="numeric" onfocus="this.select()" oninput="calculate()"
+               style="width:110px;border:none;outline:none;background:transparent;font-weight:900;font-size:34px;text-align:right;color:var(--vino);padding:0;">
+      </div>
+    </div>
+
+    <!-- VISTA 1: REGISTRO -->
+    <div id="setupView" class="fade-in">
+      <div class="card p-8 mx-auto" style="max-width:520px;">
+        <h2 class="text-center uppercase italic" style="margin:0 0 22px;font-weight:900;letter-spacing:-.02em;">Invitados a la Mesa</h2>
+
+        <div id="playerInputs" class="mb-8" style="display:flex;flex-direction:column;gap:12px;"></div>
+
+        <button onclick="addInput()" class="w-full"
+                style="padding:16px;border-radius:18px;border:2px dashed var(--stone-300);background:white;color:var(--stone-500);font-weight:900;letter-spacing:.18em;text-transform:uppercase;font-size:11px;margin-bottom:12px;">
+          + Añadir Jugador
+        </button>
+
+        <button onclick="start()" class="w-full btn-imperial">
+          Empezar Partida
+        </button>
+      </div>
+    </div>
+
+    <!-- VISTA 2: TABLA -->
+    <div id="gameView" class="hidden fade-in" style="display:flex;flex-direction:column;gap:18px;">
+
+      <div class="card" style="border-radius:32px;overflow:hidden;">
+        <div style="overflow:auto;-webkit-overflow-scrolling:touch;">
+          <table id="mainTable"></table>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr;gap:18px;">
+        <div class="card p-8">
+          <div class="uppercase" style="font-size:10px;font-weight:900;letter-spacing:.32em;color:var(--stone-400);border-bottom:1px solid var(--stone-100);padding-bottom:12px;margin-bottom:14px;">
+            Posiciones Actuales
+          </div>
+          <div id="rankingList" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
+
+        <div class="bg-stone-100" style="border-radius:32px;border:2px solid rgba(161,98,7,.18);padding:24px;box-shadow:inset 0 10px 25px rgba(0,0,0,.08);text-align:center;">
+          <div class="bg-white" style="width:70px;height:70px;border-radius:18px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(161,98,7,.25);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="7"/>
+              <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+            </svg>
+          </div>
+
+          <div class="uppercase text-stone-500" style="font-size:10px;font-weight:900;letter-spacing:.32em;margin-bottom:8px;">
+            Líder de la Partida
+          </div>
+          <div id="winnerName" class="uppercase" style="font-size:30px;font-weight:900;letter-spacing:-.02em;margin-bottom:16px;word-break:break-word;">
+            --
+          </div>
+
+          <button onclick="showReport()" class="w-full btn-imperial" style="padding:18px;border-radius:26px;">
+            Finalizar Sesión
+          </button>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <button onclick="openSettings()" style="padding:14px 18px;border-radius:18px;background:white;border:1px solid var(--stone-300);font-weight:900;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-500);">
+          Ajustes
+        </button>
+        <button onclick="resetGame()" style="padding:14px 18px;border-radius:18px;background:#fff1f2;border:1px solid #fecdd3;font-weight:900;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#be123c;">
+          Reinicio
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- MANUAL (MODAL) -->
+  <div id="manualModal" class="modal hidden" style="display:none;">
+    <div class="modal-card" style="width:min(560px, 100%);border-top:8px solid var(--oro);border-radius:44px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;">
+        <h3 class="text-vino italic" style="margin:0;font-size:22px;font-weight:900;text-decoration:underline;text-decoration-color:var(--oro);text-decoration-thickness:2px;">
+          Manual Continental
+        </h3>
+        <button onclick="toggleManual()" aria-label="Cerrar" style="background:transparent;border:none;color:var(--stone-500);padding:8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="bg-stone-50" style="border:1px solid var(--stone-200);border-radius:22px;padding:16px;">
+          <div class="text-vino uppercase" style="font-weight:900;margin-bottom:10px;">&gt; 1. INICIO Y REPARTO</div>
+          <div class="text-stone-500 uppercase" style="font-weight:800;letter-spacing:.06em;line-height:1.6;">
+            Inicia siempre el jugador que está a la <span class="text-oro">DERECHA</span> de quien repartió las cartas.
+          </div>
+        </div>
+
+        <div class="bg-stone-50" style="border:1px solid var(--stone-200);border-radius:22px;padding:16px;">
+          <div class="text-vino uppercase" style="font-weight:900;margin-bottom:10px;">&gt; 2. CARTA DE CASTIGO</div>
+          <div class="text-stone-500 uppercase" style="font-weight:800;letter-spacing:.06em;line-height:1.6;">
+            Si quieres la carta del pozo y NO es tu turno, puedes pedirla. Si el jugador en turno no la desea, la tomas pero jalas
+            <span style="color:var(--red-700);text-decoration:underline;">1 CARTA EXTRA</span> del mazo central por castigo.
+          </div>
+        </div>
+
+        <div class="bg-stone-50" style="border:1px solid var(--stone-200);border-radius:22px;padding:16px;">
+          <div class="text-vino uppercase" style="font-weight:900;margin-bottom:10px;">&gt; 3. VICTORIA Y PUNTOS</div>
+          <div class="text-stone-500 uppercase" style="font-weight:800;letter-spacing:.06em;line-height:1.6;">
+            Gana la ronda quien baje todas sus cartas (anota <span class="text-oro">0 PUNTOS</span>). Los demás anotan la suma de cartas en mano:
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;color:var(--stone-500);font-weight:900;letter-spacing:.06em;">
+            <div>• 2 a 9: VALOR FACIAL</div><div>• 10 a K: 10 PTS</div>
+            <div>• AS: 20 PTS</div><div>• JOKER: 50 PTS</div>
+          </div>
+        </div>
+
+        <div style="background:var(--vino);border-radius:22px;padding:16px;">
+          <div style="color:white;font-weight:900;margin-bottom:10px;text-transform:uppercase;">&gt; 4. GANADOR FINAL</div>
+          <div style="color:var(--stone-200);font-weight:800;letter-spacing:.06em;line-height:1.6;text-transform:uppercase;">
+            Al terminar las 9 rondas, gana quien sume <span style="color:white;text-decoration:underline;">MENOS PUNTOS TOTALES</span>.
+          </div>
+        </div>
+      </div>
+
+      <button onclick="toggleManual()" class="w-full btn-imperial" style="margin-top:16px;border-radius:999px;">
+        Cerrar Manual
+      </button>
+    </div>
+  </div>
+
+  <!-- REPORTE FINAL (MODAL) -->
+  <div id="reportModal" class="modal hidden" style="display:none;background:rgba(245,245,244,.94);">
+    <div class="modal-card" style="width:min(560px, 100%);border:4px solid var(--oro);border-radius:56px;">
+      <div style="text-align:center;padding-bottom:16px;border-bottom:1px solid var(--stone-100);">
+        <div class="bg-oro" style="width:84px;height:84px;border-radius:999px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 40px rgba(0,0,0,.18);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="7"/>
+            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+          </svg>
+        </div>
+        <div id="finalWinnerName" class="uppercase" style="font-size:34px;font-weight:900;letter-spacing:-.03em;word-break:break-word;">
+          --
+        </div>
+        <div id="finalScore" class="uppercase text-oro" style="margin-top:10px;font-weight:900;letter-spacing:.22em;font-size:12px;">
+          --
+        </div>
+      </div>
+
+      <div id="debtItems" style="margin-top:16px;display:flex;flex-direction:column;gap:12px;max-height:40vh;overflow:auto;padding-right:6px;"></div>
+
+      <button onclick="closeReport()" class="w-full btn-imperial" style="margin-top:16px;border-radius:999px;">
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- AJUSTES (MODAL) -->
+  <div id="settingsModal" class="modal hidden" style="display:none;">
+    <div class="modal-card" style="width:min(560px, 100%);border-radius:44px;">
+      <h3 class="text-center italic" style="margin:0 0 16px;font-weight:900;color:var(--vino);">Gestión de Jugadores</h3>
+      <div id="settingsList" style="display:flex;flex-direction:column;gap:12px;max-height:52vh;overflow:auto;padding-right:6px;margin-bottom:16px;"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button onclick="addFromSettings()" style="padding:14px;border-radius:18px;background:white;border:1px solid var(--stone-200);font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-500);font-size:11px;">
+          + Jugador
+        </button>
+        <button onclick="closeSettings()" class="btn-imperial" style="padding:14px;border-radius:18px;">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ROUNDS = [
+      { id: 1, g: "1 TERCIA", c: 3 }, { id: 2, g: "1 CORRIDA", c: 4 },
+      { id: 3, g: "2 TERCIAS", c: 6 }, { id: 4, g: "1 T/1 C", c: 7 },
+      { id: 5, g: "2 CORRIDAS", c: 8 }, { id: 6, g: "3 TERCIAS", c: 9 },
+      { id: 7, g: "2 T/1 C", c: 10 }, { id: 8, g: "1 T/2 C", c: 11 },
+      { id: 9, g: "3 CORRIDAS", c: 12 }
+    ];
+
+    let players = [
+      { id: 1, name: 'AGENTE 01', s: Array(9).fill(0) },
+      { id: 2, name: 'AGENTE 02', s: Array(9).fill(0) }
+    ];
+
+    function addInput() {
+      players.push({ id: Date.now(), name: `AGENTE 0${players.length + 1}`, s: Array(9).fill(0) });
+      renderSetup();
+    }
+
+    function removePlayer(id) {
+      players = players.filter(p => p.id !== id);
+      renderSetup();
+    }
+
+    function updateName(id, val) {
+      const p = players.find(x => x.id === id);
+      if (p) p.name = (val || "").toUpperCase();
+    }
+
+    function renderSetup() {
+      const el = document.getElementById('playerInputs');
+      el.innerHTML = players.map(p => `
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="text" value="${p.name}" onfocus="this.select()" oninput="updateName(${p.id}, this.value)"
+                 style="flex:1;border-radius:18px;border:1px solid var(--stone-200);background:var(--stone-50);padding:16px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--vino);">
+          ${players.length > 1 ? `
+            <button onclick="removePlayer(${p.id})"
+                    style="width:52px;height:52px;border-radius:18px;border:1px solid var(--stone-200);background:var(--stone-100);color:var(--red-700);font-weight:900;">
+              X
+            </button>` : ``}
+        </div>
+      `).join('');
+    }
+
+    function start() {
+      document.getElementById('setupView').classList.add('hidden');
+      const game = document.getElementById('gameView');
+      game.classList.remove('hidden');
+      game.style.display = "flex";
+      game.style.flexDirection = "column";
+      renderTable();
+      calculate();
+    }
+
+    function renderTable() {
+      const table = document.getElementById('mainTable');
+
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th class="sticky-col" style="text-align:left;min-width:170px;">Ronda_Meta</th>
+            ${players.map(p => `
+              <th style="min-width:110px;">
+                <div style="max-width:90px;margin:0 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
+                <div id="th-${p.id}" class="text-oro" style="margin-top:6px;font-size:12px;font-weight:900;letter-spacing:.08em;">0</div>
+              </th>
+            `).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${ROUNDS.map((r, rIdx) => `
+            <tr>
+              <td class="sticky-col" style="padding:16px;">
+                <div style="font-size:12px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--vino);">${r.g}</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
+                  <span style="font-size:10px;font-weight:900;color:var(--stone-500);background:var(--stone-100);border:1px solid var(--stone-200);padding:4px 8px;border-radius:999px;letter-spacing:.06em;">
+                    ${r.c} cartas
+                  </span>
+                  <span style="font-size:10px;font-weight:900;color:var(--oro);background:#fff7ed;border:1px solid #fed7aa;padding:4px 8px;border-radius:999px;letter-spacing:.06em;text-transform:uppercase;">
+                    Reparte: ${players[rIdx % players.length]?.name || ''}
+                  </span>
+                </div>
+              </td>
+              ${players.map(p => `
+                <td style="padding:0;border-left:1px solid var(--stone-100);">
+                  <input type="number" inputmode="numeric" value="${p.s[rIdx] || ''}"
+                         onfocus="this.select()" oninput="updateVal(${p.id}, ${rIdx}, this.value)"
+                         placeholder="0"
+                         style="width:100%;border:none;outline:none;background:transparent;text-align:center;padding:18px 8px;font-size:34px;font-weight:900;color:var(--vino);">
+                </td>
+              `).join('')}
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+    }
+
+    function updateVal(pId, rIdx, val) {
+      const p = players.find(x => x.id === pId);
+      if (p) p.s[rIdx] = parseInt(val) || 0;
+      calculate();
+    }
+
+    function totalPoints(p) {
+      return p.s.reduce((a, b) => a + b, 0);
+    }
+
+    function calculate() {
+      const bet = parseFloat(document.getElementById('betRate').value) || 0;
+
+      players.forEach(p => {
+        const tot = totalPoints(p);
+        const elH = document.getElementById(`th-${p.id}`);
+        if (elH) elH.textContent = String(tot);
+      });
+
+      const sorted = [...players].sort((a, b) => totalPoints(a) - totalPoints(b));
+      document.getElementById('winnerName').textContent = sorted[0]?.name || '--';
+      renderRanking(sorted, bet);
+    }
+
+    function renderRanking(sorted, bet) {
+      const el = document.getElementById('rankingList');
+      el.innerHTML = sorted.map((p, idx) => {
+        const tot = totalPoints(p);
+        const d = Math.round((tot / 100) * bet);
+        const isWinner = idx === 0;
+
+        return `
+          <div style="display:flex;align-items:center;justify-content:space-between;border:1px solid ${isWinner ? 'rgba(161,98,7,.55)' : 'var(--stone-100)'};background:${isWinner ? 'var(--stone-50)' : 'white'};padding:14px;border-radius:22px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:22px;font-weight:900;font-style:italic;color:${isWinner ? 'var(--oro)' : 'var(--stone-300)'};width:26px;">
+                ${idx + 1}
+              </span>
+              <span style="font-size:12px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--vino);">
+                ${p.name}
+              </span>
+            </div>
+            <span style="font-size:16px;font-weight:900;color:${isWinner ? 'var(--oro)' : 'var(--red-700)'};">
+              ${isWinner ? 'GANADOR' : `-$${d}`}
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function showReport() {
+      const bet = parseFloat(document.getElementById('betRate').value) || 0;
+      const sorted = [...players].sort((a, b) => totalPoints(a) - totalPoints(b));
+      const win = sorted[0];
+      const pts = totalPoints(win);
+
+      document.getElementById('finalWinnerName').textContent = win?.name || '--';
+      document.getElementById('finalScore').textContent = `${pts} PUNTOS ACUMULADOS`;
+
+      let html = "";
+      players.forEach(p => {
+        if (p.id !== win.id) {
+          const d = Math.round((totalPoints(p) / 100) * bet);
+          html += `
+            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--stone-50);border:1px solid var(--stone-200);padding:16px;border-radius:28px;">
+              <span style="color:var(--stone-500);font-weight:900;text-transform:uppercase;letter-spacing:.08em;font-size:11px;">
+                ${p.name}
+              </span>
+              <span style="color:var(--red-700);font-weight:900;font-size:26px;">
+                $${d}
+              </span>
+            </div>
+          `;
+        }
+      });
+
+      document.getElementById('debtItems').innerHTML = html || `<div class="text-center text-stone-500 uppercase" style="font-weight:900;letter-spacing:.12em;">Sin deudas registradas</div>`;
+      showModal('reportModal');
+    }
+
+    // AJUSTES
+    function openSettings() {
+      document.getElementById('settingsList').innerHTML = players.map(p => `
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="text" value="${p.name}" oninput="updateName(${p.id}, this.value)"
+                 style="flex:1;border-radius:18px;border:1px solid var(--stone-200);background:var(--stone-50);padding:14px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--vino);">
+          <button onclick="removeAgenteSettings(${p.id})"
+                  style="width:52px;height:52px;border-radius:18px;border:1px solid #fecdd3;background:#fff1f2;color:#be123c;font-weight:900;">
+            X
+          </button>
+        </div>
+      `).join('');
+      showModal('settingsModal');
+    }
+
+    function addFromSettings() {
+      players.push({ id: Date.now(), name: `JUGADOR`, s: Array(9).fill(0) });
+      openSettings();
+    }
+
+    function removeAgenteSettings(id) {
+      if (players.length > 1) {
+        players = players.filter(p => p.id !== id);
+        openSettings();
+      }
+    }
+
+    function closeSettings() {
+      hideModal('settingsModal');
+      renderTable();
+      calculate();
+    }
+
+    function toggleManual() {
+      const el = document.getElementById('manualModal');
+      if (el.classList.contains('hidden')) showModal('manualModal');
+      else hideModal('manualModal');
+    }
+
+    function closeReport() {
+      hideModal('reportModal');
+    }
+
+    function resetGame() {
+      if (confirm("¿BORRAR TODO?")) location.reload();
+    }
+
+    // Modal helpers
+    function showModal(id) {
+      const el = document.getElementById(id);
+      el.classList.remove('hidden');
+      el.style.display = "flex";
+    }
+    function hideModal(id) {
+      const el = document.getElementById(id);
+      el.classList.add('hidden');
+      el.style.display = "none";
+    }
+
+    renderSetup();
+  </script>
+
+</body>
+  </html>
