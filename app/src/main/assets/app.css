@@ -1,0 +1,217 @@
+/* =========================
+   VARIABLES DE COLOR
+========================= */
+:root{
+  --vino:#4c0519;
+  --vino-dark:#700d2b;
+  --oro:#a16207;
+  --beige:#f5f5f4;
+  --beige-dark:#e7e5e4;
+  --stone-50:#fafaf9;
+  --stone-100:#f5f5f4;
+  --stone-200:#e7e5e4;
+  --stone-300:#d6d3d1;
+  --stone-400:#a8a29e;
+  --stone-500:#78716c;
+  --red-700:#b91c1c;
+}
+
+/* =========================
+   RESET BÁSICO
+========================= */
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--beige);
+  color:var(--vino);
+  font-family:"Inter", system-ui, sans-serif;
+}
+
+/* =========================
+   TIPOGRAFÍA
+========================= */
+.font-serif{
+  font-family:"Playfair Display", serif;
+}
+.uppercase{ text-transform:uppercase; }
+.italic{ font-style:italic; }
+.bold{ font-weight:700; }
+.black{ font-weight:800; }
+
+/* =========================
+   LAYOUT
+========================= */
+.min-h-screen{ min-height:100vh; }
+.flex{ display:flex; }
+.flex-col{ flex-direction:column; }
+.items-center{ align-items:center; }
+.justify-between{ justify-content:space-between; }
+.justify-center{ justify-content:center; }
+.text-center{ text-align:center; }
+.w-full{ width:100%; }
+.mx-auto{ margin-left:auto; margin-right:auto; }
+.p-4{ padding:1rem; }
+.p-5{ padding:1.25rem; }
+.p-6{ padding:1.5rem; }
+.p-8{ padding:2rem; }
+.mb-4{ margin-bottom:1rem; }
+.mb-6{ margin-bottom:1.5rem; }
+.mb-8{ margin-bottom:2rem; }
+.mt-2{ margin-top:.5rem; }
+.mt-4{ margin-top:1rem; }
+.mt-8{ margin-top:2rem; }
+
+/* =========================
+   COLORES
+========================= */
+.bg-vino{ background:var(--vino); color:white; }
+.bg-oro{ background:var(--oro); color:white; }
+.bg-white{ background:white; }
+.bg-stone-50{ background:var(--stone-50); }
+.bg-stone-100{ background:var(--stone-100); }
+.text-vino{ color:var(--vino); }
+.text-oro{ color:var(--oro); }
+.text-stone-500{ color:var(--stone-500); }
+.text-red{ color:var(--red-700); }
+
+/* =========================
+   HEADER
+========================= */
+header{
+  background:var(--vino);
+  border-bottom:4px solid var(--oro);
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+header h1{
+  font-family:"Playfair Display", serif;
+  font-size:1.3rem;
+  letter-spacing:.03em;
+}
+
+/* =========================
+   CARDS
+========================= */
+.card{
+  background:white;
+  border:1px solid var(--beige-dark);
+  border-radius:2rem;
+  box-shadow:0 6px 25px rgba(76,5,25,.08);
+}
+.card-left-oro{
+  border-left:8px solid var(--oro);
+}
+
+/* =========================
+   BOTONES
+========================= */
+button{
+  border:none;
+  cursor:pointer;
+  font-family:"Inter", sans-serif;
+}
+.btn-imperial{
+  background:linear-gradient(135deg,var(--vino),var(--vino-dark));
+  color:white;
+  border-radius:1.5rem;
+  padding:1.2rem;
+  font-weight:800;
+  letter-spacing:.15em;
+  box-shadow:0 6px 20px rgba(76,5,25,.35);
+}
+.btn-imperial:active{
+  transform:scale(.97);
+}
+
+/* =========================
+   INPUTS
+========================= */
+input{
+  font-family:"Inter", sans-serif;
+  border-radius:1.5rem;
+  border:1px solid var(--stone-200);
+  padding:1rem;
+  font-weight:600;
+  color:var(--vino);
+  background:var(--stone-50);
+}
+input:focus{
+  outline:none;
+  border-color:var(--oro);
+  background:white;
+}
+
+/* quitar spinners number */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+
+/* =========================
+   TABLA
+========================= */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th{
+  background:var(--vino);
+  color:white;
+  padding:1rem;
+  font-size:.65rem;
+  letter-spacing:.25em;
+}
+td{
+  border-top:1px solid var(--stone-100);
+}
+.sticky-col{
+  position:sticky;
+  left:0;
+  background:white;
+  z-index:10;
+  border-right:2px solid var(--oro);
+}
+
+/* =========================
+   MODALES
+========================= */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+}
+.modal-card{
+  background:white;
+  border-radius:3rem;
+  padding:2rem;
+  max-height:85vh;
+  overflow:auto;
+}
+
+/* =========================
+   SCROLL PERSONALIZADO
+========================= */
+::-webkit-scrollbar{
+  width:6px;
+}
+::-webkit-scrollbar-thumb{
+  background:var(--oro);
+  border-radius:3px;
+}
+
+/* =========================
+   UTILIDADES
+========================= */
+.hidden{ display:none; }
+.shadow-inner{
+  box-shadow:inset 0 4px 10px rgba(0,0,0,.08);
+}
+.rounded-full{ border-radius:9999px; }
